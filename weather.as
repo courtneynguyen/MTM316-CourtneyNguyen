@@ -16,6 +16,7 @@
 		var cloudArray:Array = [];
 		var weekDays:Array = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 		var dayArray:Array = [];
+		var bgArray:Array = [];
 		var date:Date;
 		var oldCity:String;
 		var localObject:SharedObject = SharedObject.getLocal("localObjectID");
@@ -28,12 +29,18 @@
 			FillArray();
 			GetXMLData();
 			
+			bgArray[0] = stage1.daybg_mc.daybg2_mc;
+			bgArray[1] = stage1.daybg_mc.nightbg_mc;
+			bgArray[2] = stage1.daybg_mc.cloudybg2_mc;
+			bgArray[3] = stage1.daybg_mc.snowbg3_mc;
 			
-			up.x = stage.x/2;
+			
+			var displace:Number= 85;
+			up.x = stage.x/2 + displace;
 			up.y = stage.y;
 			up.addEventListener(MouseEvent.CLICK, panScene);
 			var down = new up_btn;
-			down.x = stage.x/2;
+			down.x = stage.x/2 +displace;
 			down.y = stage.y-150;
 			down.addEventListener(MouseEvent.CLICK, panDown);
 		
@@ -41,8 +48,8 @@
 			stage1.addChild(down);
 			stage1.save_btn.addEventListener(MouseEvent.CLICK, storeData);
 			//stage1.addEventListener(Event.ENTER_FRAME, stopFrame);
-			for(var m:Number=1; m < 7; m++){
-				stage1["day" + m].addEventListener(MouseEvent.CLICK, swap);
+			for(var i:Number = 1; i < 7; i++){
+				stage1["day" + i].addEventListener(MouseEvent.CLICK, swap);
 			}
 		}
 		
@@ -76,7 +83,7 @@
 				
 				cloudArray.push(cloud3);
 			}
-			stage1.addEventListener(Event.ENTER_FRAME,followBall);
+			addEventListener(Event.ENTER_FRAME,followBall);
 			
 			for(var i:Number=0; i < 900; i++){
 				stage1.y++;
@@ -110,8 +117,8 @@
 		
 		public function FillArray():void{
 			var name2:String;
-			var xLocation:Number = 20;
-			var weat_h:Number = 190.05;
+			var xLocation:Number = 125;
+			var weat_h:Number = 150.05;
 			var weat_w:Number = 99.05;
 			for(var i:Number = 0; i < 7; i++){
 				name2 = "day" + i;
@@ -119,17 +126,17 @@
 				if(i == 0){
 					
 					dayArray[name2] = new big_mc;
-					dayArray[name2].x = 50.35;
+					dayArray[name2].x = 150.35;
 					dayArray[name2].y = 237.45;
 					dayArray[name2].height = 571.70;
-					dayArray[name2].width = 900.60;
+					dayArray[name2].width = 1150;
 					
 				}
 				else if(i == 1){
 					
 					dayArray[name2] = new small_mc;
 					dayArray[name2].x = xLocation;
-					dayArray[name2].y = 698;
+					dayArray[name2].y = 730;
 					dayArray[name2].height = weat_h;
 					dayArray[name2].width = weat_w;
 				
@@ -138,7 +145,7 @@
 					xLocation += 170;
 					dayArray[name2] = new small_mc;
 					dayArray[name2].x = xLocation;
-					dayArray[name2].y = 698;
+					dayArray[name2].y = 730;
 					dayArray[name2].height = weat_h;
 					dayArray[name2].width = weat_w;
 					
@@ -191,6 +198,62 @@
 				var theDay = "day" + (i);
 				var num:Number = parseWeather(i);
 				dayArray[theDay].gotoAndStop(num);
+				if(i == 0){
+					
+					switch(num){
+						case 1:
+								bgArray[0].alpha = 0;
+								stage1.addEventListener(Event.ENTER_FRAME, function(e:Event):void{
+								changeBack(e, arguments.callee, 0);
+							});
+						break;
+						
+						case 2:
+								bgArray[1].alpha = 1;
+								stage1.addEventListener(Event.ENTER_FRAME, function(e:Event):void{
+								changeStage(e, arguments.callee, 1);
+							});
+						break;
+						
+						case 3:
+									bgArray[1].alpha = 1;
+									stage1.addEventListener(Event.ENTER_FRAME, function(e:Event):void{
+								changeStage(e, arguments.callee, 1);
+							});
+						break;
+						
+						case 4:
+									bgArray[0].alpha = 1;
+									bgArray[1].alpha = 1;
+									bgArray[2].alpha = 1;
+									stage1.addEventListener(Event.ENTER_FRAME, function(e:Event):void{
+								changeBack(e, arguments.callee,2);
+							});
+						break;
+						
+						case 5:
+									bgArray[0].alpha = 1;
+									bgArray[1].alpha = 1;
+									bgArray[2].alpha = 1;
+									stage1.addEventListener(Event.ENTER_FRAME, function(e:Event):void{
+								changeStage(e, arguments.callee, 3);
+							});
+						break;
+
+						case 6:
+									bgArray[0].alpha = 1;
+									bgArray[1].alpha = 1;
+									bgArray[2].alpha = 1;
+									stage1.addEventListener(Event.ENTER_FRAME, function(e:Event):void{
+								changeBack(e, arguments.callee, 2);
+							});
+						break;
+						
+						default:
+							stage1.error_txt.text = "Error!!";
+						break;
+					}
+				}
 			}
 			
 			for(var j:Number = 1; j < dayArray.length; j++){
@@ -201,14 +264,12 @@
 				else if(dayArray["day" +j].cloudy_mc !=null){
 				dayArray["day" +j].cloudy_mc.sun_mc.gotoAndStop(1);}
 				else if(dayArray["day" +j].rainy_mc !=null){
-				trace(dayArray["day" +j].rainy_mc);
 					dayArray["day" +j].rainy_mc.rain_mc.gotoAndStop(10);
 					}
 				else if(dayArray["day" +j].thunder_mc !=null){
-					trace(dayArray["day" +j].thunder_mc.name);
 				dayArray["day" +j].thunder_mc.light_mc.gotoAndStop(10);}
-				else if(dayArray["day" +j].snowy_mc !=null){
-				dayArray["day" +j].snowy_mc.snow_mc.gotoAndStop(1);}
+				else if(dayArray["day" +j].snow_mc !=null){
+				dayArray["day" +j].snow_mc.snow_mc3.gotoAndStop(1);}
 			}
 			
 			//todaysDay();
@@ -250,11 +311,11 @@
 						switch(type2){
 						case "snow":
 							wCode = 5;
-							weather2 = "Snow and\n" + myXML.forecast.time[y].clouds.@value;
+							weather2 = "Snow and " + myXML.forecast.time[y].clouds.@value;
 							break;
 						case "rain":
 							wCode = 2;
-							weather2 = "Rain and\n" + myXML.forecast.time[y].clouds.@value;
+							weather2 = "Rain and " + myXML.forecast.time[y].clouds.@value;
 							break;
 						
 						}
@@ -419,13 +480,63 @@
 				dayArray[oldDay].partly_mc.gotoAndStop(20);}
 				else if(dayArray[oldDay].cloudy_mc !=null){
 				dayArray[oldDay].cloudy_mc.sun_mc.gotoAndStop(1);}
-				else if(dayArray[oldDay].rainy_mc.rain_mc !=null){
+				else if(dayArray[oldDay].rainy_mc !=null){
 				dayArray[oldDay].rainy_mc.rain_mc.gotoAndStop(10);}
 				else if(dayArray[oldDay].thunder_mc !=null){
 				dayArray[oldDay].thunder_mc.gotoAndStop(10);}
 				else if(dayArray[oldDay].snowy_mc !=null){
-				dayArray[oldDay].snowy_mc.snow_mc.gotoAndStop(1);} 
+				dayArray[oldDay].snowy_mc.snow_mc2.gotoAndStop(1);} 
 			
+			}
+			
+			function changeStage(e:Event, fct:Function, num:Number):void{
+				
+				if(num > 1){
+					for(var x:Number = 0; x < num; x++){
+						bgArray[x].alpha -= .1;
+						if(bgArray[num-1].alpha <= 0){
+						stage1.gotoAndStop(1);
+						stage1.removeEventListener(e.type, fct);
+						}
+						
+					}
+				}
+				else{
+					bgArray[0].alpha -= 0.1;
+					if(bgArray[0].alpha <= 0){
+						stage1.gotoAndStop(1);
+						stage1.removeEventListener(e.type, fct);
+					}
+			}
+			
+			
+				
+				
+				}
+				
+				function changeBack(e:Event, fct:Function, num:Number):void{
+				
+				if(num > 1){
+					
+					for(var x:Number = 0; x < num; x++){
+						bgArray[x].alpha -= .1;
+						trace(x + " : " + bgArray[x].alpha);
+						if(bgArray[num-1].alpha <= 0){
+						stage1.gotoAndStop(1);
+						stage1.removeEventListener(e.type, fct);
+						}
+						trace('done');
+						
+					}
+					trace('section');
+				}
+				else{
+					bgArray[num].alpha += 0.1;
+					if(bgArray[num].alpha >= 1){
+						stage1.gotoAndStop(1);
+						stage1.removeEventListener(e.type, fct);
+					}
+				}
 			}
 		}
 
