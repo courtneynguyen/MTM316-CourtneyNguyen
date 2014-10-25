@@ -23,25 +23,26 @@
 		
 		public function weather() {
 			stage1 = new stage_mc;
-			var up = new up_btn;
+			var up = new edit_btn;
 			addChild(stage1);
 			stage1.save_btn.addEventListener(MouseEvent.CLICK, changeWeather);
-			FillArray();
+			SetWeatherStage();
 			GetXMLData();
 			
+			/* Sets weather bg array */
 			bgArray[0] = stage1.daybg_mc.daybg2_mc;
 			bgArray[1] = stage1.daybg_mc.nightbg_mc;
 			bgArray[2] = stage1.daybg_mc.cloudybg2_mc;
 			bgArray[3] = stage1.daybg_mc.snowbg3_mc;
 			
 			
-			var displace:Number= 85;
-			up.x = stage.x/2 + displace;
-			up.y = stage.y;
+			var displace:Number= 200;
+			up.x = stage.x/2 - displace;
+			up.y = stage.y +360;
 			up.addEventListener(MouseEvent.CLICK, panScene);
-			var down = new up_btn;
-			down.x = stage.x/2 +displace;
-			down.y = stage.y-150;
+			var down = new back_btn;
+			down.x = stage.x/2;
+			down.y = stage.y - 380;
 			down.addEventListener(MouseEvent.CLICK, panDown);
 		
 			stage1.addChild(up);
@@ -51,6 +52,7 @@
 			for(var i:Number = 1; i < 7; i++){
 				stage1["day" + i].addEventListener(MouseEvent.CLICK, swap);
 			}
+			//testRain();
 		}
 		
 		public function panScene(e:Event):void{
@@ -115,11 +117,12 @@
 			
 		}
 		
-		public function FillArray():void{
+		public function SetWeatherStage():void{
 			var name2:String;
 			var xLocation:Number = 125;
 			var weat_h:Number = 150.05;
 			var weat_w:Number = 99.05;
+			var weekHeight:Number = 715;
 			for(var i:Number = 0; i < 7; i++){
 				name2 = "day" + i;
 				
@@ -128,15 +131,15 @@
 					dayArray[name2] = new big_mc;
 					dayArray[name2].x = 150.35;
 					dayArray[name2].y = 237.45;
-					dayArray[name2].height = 571.70;
-					dayArray[name2].width = 1150;
+					dayArray[name2].height = 480;
+					dayArray[name2].width = 960;
 					
 				}
 				else if(i == 1){
 					
 					dayArray[name2] = new small_mc;
 					dayArray[name2].x = xLocation;
-					dayArray[name2].y = 730;
+					dayArray[name2].y = weekHeight;
 					dayArray[name2].height = weat_h;
 					dayArray[name2].width = weat_w;
 				
@@ -145,7 +148,7 @@
 					xLocation += 170;
 					dayArray[name2] = new small_mc;
 					dayArray[name2].x = xLocation;
-					dayArray[name2].y = 730;
+					dayArray[name2].y = weekHeight;
 					dayArray[name2].height = weat_h;
 					dayArray[name2].width = weat_w;
 					
@@ -264,7 +267,11 @@
 				else if(dayArray["day" +j].cloudy_mc !=null){
 				dayArray["day" +j].cloudy_mc.sun_mc.gotoAndStop(1);}
 				else if(dayArray["day" +j].rainy_mc !=null){
-					dayArray["day" +j].rainy_mc.rain_mc.gotoAndStop(10);
+					/*trace('get here!');
+					trace(dayArray["day" +j].rainy_mc.rain_mc);
+					var myRoot:MovieClip = MovieClip(root);
+					myRoot.gotoAndStop(4); */
+					dayArray["day" +j].rainy_mc.raining_mc.gotoAndStop(15);
 					}
 				else if(dayArray["day" +j].thunder_mc !=null){
 				dayArray["day" +j].thunder_mc.light_mc.gotoAndStop(10);}
@@ -302,8 +309,8 @@
 				wind = myXML.forecast.time[(y)].windSpeed.@mps + " mps";
 				humidity = myXML.forecast.time[(y)].humidity.@value + "" + myXML.forecast.time[(y)].humidity.@unit;
 				winddir = myXML.forecast.time[(y)].windDirection.@code;
-				min = myXML.forecast.time[y].temperature.@min;
-				max =  myXML.forecast.time[y].temperature.@max;
+				min = myXML.forecast.time[y].temperature.@min + "°F" ;
+				max =  myXML.forecast.time[y].temperature.@max + "°F";
 					
 					if(myXML.forecast.time[(y)].precipitation.@type.length() > 0){
 						
@@ -481,7 +488,7 @@
 				else if(dayArray[oldDay].cloudy_mc !=null){
 				dayArray[oldDay].cloudy_mc.sun_mc.gotoAndStop(1);}
 				else if(dayArray[oldDay].rainy_mc !=null){
-				dayArray[oldDay].rainy_mc.rain_mc.gotoAndStop(10);}
+				dayArray[oldDay].rainy_mc.raining_mc.gotoAndStop(10);}
 				else if(dayArray[oldDay].thunder_mc !=null){
 				dayArray[oldDay].thunder_mc.gotoAndStop(10);}
 				else if(dayArray[oldDay].snowy_mc !=null){
